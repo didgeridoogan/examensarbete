@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgeting App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="greeting">Hej igen, Användarnamn</div>
+                <div class="navigation">
+                    <button class="nav-btn" onclick="changeMonth(-1)">&lt;</button>
+                    <div class="month" id="currentMonth">Augusti</div>
+                    <button class="nav-btn" onclick="changeMonth(1)">&gt;</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="budget-summary">
+                <div class="total-budget" id="total">$0.00 / $0.00</div>
+            </div>
+
+            <div class="budget-bar-chart">
+                <canvas id="expenseChart"></canvas>
+            </div>
+
+            <div class="budget-form">
+                <label for="budget">Ange Budget:</label>
+                <input type="number" id="budget" placeholder="Skriv in din budget">
+                <button onclick="setBudget()">Ange Budget</button>
+            </div>
+
+            <div class="item-form">
+                <label for="itemName">Objekt Namn:</label>
+                <input type="text" id="itemName" placeholder="Skriv in objekt namn">
+                <label for="itemAmount">Belopp:</label>
+                <input type="number" id="itemAmount" placeholder="Skriv in belopp">
+                <label for="itemCategory">Kategori:</label>
+                <input type="text" id="itemCategory" placeholder="Skriv in kategori">
+                <button onclick="addItem()">Lägg till Objekt</button>
+            </div>
+
+            <div id="filter-form">
+                <label for="categoryFilter">Filtrera efter Kategori:</label>
+                <select id="categoryFilter" onchange="filterItems()">
+                    <option value="all">Alla</option>
+                </select>
+            </div>
+
+            <div id="items-list">
+                <!-- Items will be dynamically added here -->
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
