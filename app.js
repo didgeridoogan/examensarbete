@@ -43,16 +43,17 @@ function setBudget() {
     budget = parseFloat(budgetInput.value);
     localStorage.setItem(`budget_${currentMonthIndex}`, budget);
     updateTotal();
+    updateChart();
 }
 
 function loadStoredBudget() {
     const savedBudget = localStorage.getItem(`budget_${currentMonthIndex}`);
-    if (savedBudget) {
+    if (savedBudget !== null && !isNaN(savedBudget)) {
         budget = parseFloat(savedBudget);
-        document.getElementById('budget').value = budget;
+        document.getElementById('budget').value = budget.toFixed(2); // Update input field with the budget value
     } else {
         budget = 0;
-        document.getElementById('budget').value = '';
+        document.getElementById('budget').value = ''; // Clear input field if budget is not valid
     }
     updateTotal();
 }
@@ -67,12 +68,12 @@ function addItem() {
     const itemCategory = itemCategoryInput.value.trim();
 
     if (itemName.trim() === '' || isNaN(itemAmount) || itemAmount <= 0 || itemCategory === '') {
-        alert('Please enter valid item name, amount, and category.');
+        alert('Vänligen ange ett giltigt namn, belopp, och kategori.');
         return;
     }
 
     if (totalAmount + itemAmount > budget) {
-        alert('Warning: Adding this item will exceed your budget!');
+        alert('Varning! Detta kommer överskrida din budget!');
     }
 
     items.push({ name: itemName, amount: itemAmount, category: itemCategory });
@@ -147,7 +148,7 @@ function updateTotal() {
     const totalDiv = document.getElementById('total');
     totalAmount = items.reduce((sum, item) => sum + item.amount, 0); // Recalculate total amount
     totalDiv.textContent = `Total: ${totalAmount.toFixed(2)} / ${budget.toFixed(2)}`;
-    
+
     if (totalAmount > budget) {
         totalDiv.style.color = 'red';
         document.querySelectorAll('.item').forEach(item => {
@@ -157,6 +158,63 @@ function updateTotal() {
         totalDiv.style.color = 'black';
         document.querySelectorAll('.item').forEach(item => {
             item.style.color = 'black';
+        });
+    }
+}
+
+function initializeChart() {
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Expenses',
+                data: [],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function updateChart() {
+    const labels = items.map(item => item.name);
+    const data = items.map(item => item.amount);
+
+    if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = data;
+        chart.update();
+    } else {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Expenses',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
         });
     }
 }
